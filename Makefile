@@ -1,7 +1,10 @@
 obj-m += sock-test.o 
 
+CURRENT_DIR := $(shell pwd)
+KDIR := /lib/modules/$(shell uname -r)/build
+
 all:
-		make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
+	$(MAKE) -C $(KDIR) M=$(CURRENT_DIR) modules
 
 clean:
-	make -C /lib/modules/$(shell uname -r)build M=$(PWD) clean
+	$(MAKE) -C $(KDIR) M=$(CURRENT_DIR) clean

@@ -1,10 +1,10 @@
 [Unit]
-Description=Run my custom boot script
+Description=Run https-handler 
 After=network.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/local/bin/spawn-setup.sh
+ExecStart=/etc/https-handler/spawn-setup.sh
 
 [Install]
 WantedBy=multi-user.target
